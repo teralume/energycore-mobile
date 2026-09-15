@@ -23,13 +23,15 @@ Las 11 pruebas Flutter pasan, incluida la apertura de autenticación sin sesión
 393 × 852 con `TargetPlatform.iOS`. Esa prueba ejecuta widgets con almacenamiento
 simulado: no acredita el motor UIKit, Keychain ni una ejecución en iPhone.
 Se incluye un XCTest para lectura, actualización, persistencia entre instancias y
-borrado del token en Keychain, pendiente de ejecución con Xcode.
+borrado del token en Keychain, pendiente de ejecución interactiva con Xcode.
 
-El entorno disponible es Windows y el equipo no dispone de Mac. Por tanto, el
-estado es **compatibilidad iOS preparada en código; compilación y ejecución iOS
-no verificadas**. No se presenta un IPA ni capturas Android como evidencia iOS.
+GitHub Actions ejecutó `flutter build ios --simulator --debug` correctamente en
+un runner macOS y publicó `Runner.app` como artefacto. Por tanto, el estado es
+**compatibilidad y compilación para simulador verificadas; Keychain y ejecución
+interactiva en un iPhone físico no verificadas**. No se presenta un IPA ni
+capturas Android como evidencia iOS.
 
-## Validación futura en macOS
+## Validación interactiva pendiente en macOS
 
 Con Flutter 3.44.8 y Xcode configurados, desde la carpeta `flutter`:
 
