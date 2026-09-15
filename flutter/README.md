@@ -68,7 +68,8 @@ Para usar otra API:
 
 La misma aplicación Flutter incluye el proyecto Xcode y la integración con Keychain.
 Consulta [alcance, evidencia y ejecución iOS](docs/ios-compatibility.md).
-La compilación y ejecución iOS están pendientes de un entorno macOS/Xcode.
+La compilación para simulador iOS está verificada mediante GitHub Actions en macOS.
+La ejecución interactiva y Keychain en un iPhone físico permanecen pendientes.
 
 ## Pruebas compartidas
 
