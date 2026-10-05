@@ -1,0 +1,63 @@
+name: Mobile CI and delivery
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    working-directory: flutter
+
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: gradle
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - name: Formatting
+        run: dart format --output=none --set-exit-if-changed lib test
+      - name: Static analysis
+        run: flutter analyze
+      - name: Unit, widget, and compatibility tests
+        run: flutter test --coverage
+      - name: Build releasable Android package
+        run: flutter build apk --release
+      - name: Publish tested APK and coverage
+        uses: actions/upload-artifact@v7
+        with:
+          name: energycore-mobile-android-${{ github.sha }}
+          path: |
+            flutter/build/app/outputs/flutter-apk/app-release.apk
+            flutter/coverage/lcov.info
+          if-no-files-found: error
+
+  ios-compatibility:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - name: Build iOS simulator application
+        run: flutter build ios --simulator --debug
+      - name: Publish iOS simulator build
+        uses: actions/upload-artifact@v7
+        with:
+          name: energycore-mobile-ios-simulator-${{ github.sha }}
+          path: flutter/build/ios/iphonesimulator/Runner.app
+          if-no-files-found: error

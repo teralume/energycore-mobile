@@ -2,6 +2,20 @@
 
 Cliente móvil de EnergyCore. Consume la API REST existente de `energycore-platform`; no crea ni mantiene una base de datos de producto separada.
 
+## Pruebas y CI/CD
+
+Cada `push` y Pull Request ejecuta formato, análisis estático, pruebas unitarias,
+pruebas de widgets y compatibilidad, y genera un APK release. Un job adicional
+en macOS compila la aplicación para el simulador iOS. Los binarios verificados
+y el reporte de cobertura quedan disponibles como artefactos de GitHub Actions.
+
+```powershell
+flutter pub get
+flutter analyze
+flutter test --coverage
+flutter build apk --release
+```
+
 ## Alcance implementado
 
 - Autenticación: inicio de sesión, registro, recuperación, restablecimiento por
@@ -23,7 +37,7 @@ Cliente móvil de EnergyCore. Consume la API REST existente de `energycore-platf
 - Inglés, español y portugués; tema de sistema, claro u oscuro sincronizado con
   las preferencias del backend.
 - Permisos por perfil, acceso condicionado a suscripción y límites por plan.
-- Sesión JWT cifrada mediante AES/GCM respaldado por Android Keystore.
+- Sesión JWT mediante Android Keystore (AES/GCM) o iOS Keychain.
 - Aviso persistente sin conexión y acción `Reintentar`.
 - Ícono y pantalla de arranque Android propios de EnergyCore, sin recursos
   visuales azules del proyecto Flutter predeterminado en uso.
@@ -42,7 +56,7 @@ Set-Location M:\
 & "C:\JeanLoa\SDKs\flutter\bin\flutter.bat" run -d emulator-5554
 ```
 
-El backend debe estar disponible en el puerto `8080`. En desarrollo, la aplicación usa `http://10.0.2.2:8080/api/v1`, el alias del equipo anfitrión desde el emulador Android.
+La aplicación usa la API pública HTTPS de EnergyCore de forma predeterminada. Para desarrollo local Android, especificar `--dart-define=API_BASE_URL=http://10.0.2.2:8080/api/v1`.
 
 Para usar otra API:
 
@@ -50,7 +64,14 @@ Para usar otra API:
 & "C:\JeanLoa\SDKs\flutter\bin\flutter.bat" run -d emulator-5554 --dart-define=API_BASE_URL="https://api.example.com/api/v1"
 ```
 
-## Verificación
+## Compatibilidad iOS
+
+La misma aplicación Flutter incluye el proyecto Xcode y la integración con Keychain.
+Consulta [alcance, evidencia y ejecución iOS](docs/ios-compatibility.md).
+La compilación para simulador iOS está verificada mediante GitHub Actions en macOS.
+La ejecución interactiva y Keychain en un iPhone físico permanecen pendientes.
+
+## Pruebas compartidas
 
 ```powershell
 & "C:\JeanLoa\SDKs\flutter\bin\dart.bat" analyze
